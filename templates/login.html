@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        form p {
+            margin: 0 0 10px 0;
+        }
+
+        .sent {
+            background-color: #8ee8e8;
+            color: #302e2e; /* Text color */
+            text-align: right;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 15px; /* Rounded corners */
+            max-width: 70%; /* Adjust the maximum width of the message box */
+            word-wrap: break-word; /* Wrap long words */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+            float: right;
+        }
+
+        .received {
+            background-color: #72ec9b;
+            color: #302e2e; /* Text color */
+            text-align: left;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 15px; /* Rounded corners */
+            max-width: 70%; /* Adjust the maximum width of the message box */
+            word-wrap: break-word; /* Wrap long words */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

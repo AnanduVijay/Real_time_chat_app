@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #8353cd;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 0px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: 100vh;
+            max-height: calc(100vh - 100px);
+            overflow: hidden;
+        }
+    
+        .header h2 {
+            margin: 0;
+            color: #fff;
+        }
+        .header h3 {
+            margin: 0;
+            color: #fff;
+        }
+
+        .logout-form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .file__item__container {
+            max-height: calc(100vh - 200px);
+            font-size: 15px;
+            /* padding: 20px; */
+            overflow-y: auto;
+            clear: both;
+        }
+        .file__item__container {
+    max-height: calc(100vh - 200px); /* Adjust as needed */
+    font-size: 15px;
+    overflow-y: auto;
+    clear: both;
+    border: 1px solid #ccc; /* Example border */
+    border-radius: 8px; /* Example border radius */
+    padding: 20px; /* Example padding */
+}
+        
+    </style>
+
+</head>
+<body>
+    <div class="header">
+        <div>
+             <a href="{% url 'home' %}">
+               <h2>Chat App</h2> 
+            </a>
+        </div>
+        <h3>Hello, {{request.user | upper }}</h3>
+        <div class="logout-form">
+            {% if request.user.is_authenticated %}
+                <form method="post" action="{% url 'logout-user' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <section class="container">
+        <div class="file__item__container" id="id_file__item__container">
+            <form method="post" enctype="multipart/form-data">
+             {% csrf_token %}
+             {{ form.as_p }}
+            <button type="submit">Upload</button>
+           </form>
+           <p><a href="{% url 'home' %}">Cancel</a></p>
+         </div>
+    </section>
+</body>
+</html>

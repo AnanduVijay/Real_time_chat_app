@@ -1,0 +1,313 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #8353cd;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 0px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: 100vh;
+            max-height: calc(100vh - 100px);
+            overflow: hidden;
+        }
+        .chat__input__container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+        }
+        .header h2 {
+            margin: 0;
+            color: #fff;
+        }
+        .header h3 {
+            margin: 0;
+            color: #fff;
+        }
+        .sent, .received {
+            padding: 10px;
+            border-radius: 15px;
+            min-width: 47%;
+            max-width: 70%;
+            word-wrap: break-word;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+        .sent {
+            background-color: #bbd7e8;
+            color: #302e2e; /* Text color */
+            float: right; /* Float sent messages to the right */
+            text-align: right;
+            margin-bottom: 10px;
+            border-bottom-left-radius: 54px;
+            border-top-right-radius: 0px;
+        }
+
+        .received {
+            background-color: #9f9fb8;
+            color: #302e2e; /* Text color */
+            float: left; /* Float received messages to the left */
+            text-align: left;
+            margin-bottom: 10px;
+            border-top-right-radius: 54px;
+            border-top-left-radius: 0px;
+        }
+
+        .logout-form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .chat__item__container {
+            max-height: calc(100vh - 200px);
+            font-size: 15px;
+            /* padding: 20px; */
+            overflow-y: auto;
+            clear: both;
+        }
+        .chat__item__container::-webkit-scrollbar{
+            display: none;
+        }
+        .timestamp {
+            font-size: x-small;
+            font-weight: 100; /* Thin font weight */
+        }
+
+        #id_message_send_input {
+            height: 30px;
+            border-radius: 5px;
+            padding: 10px;
+            width: 85%;
+            border: 1px solid #ccc;
+        }
+        #id_message_send_button {
+            height: 40px;
+            border-radius: 5px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 7px;
+        }
+        .file-input-container {
+            display: inline-block;
+            background-color: #fff;
+            color: #007bff;
+            border: 2px solid #0d131a;
+            padding: 13px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+
+        }
+
+        /* Style hover effect */
+        .file-input-container:hover {
+            background-color: #f0f0f0;
+            
+        }
+        input[type="file"] {
+        display: none;
+        }
+
+        img {
+            display: block;
+            max-width:180px;
+            max-height:180px;
+            width: auto;
+            height: auto;
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+             <a href="{% url 'home' %}">
+               <h2>Chat App</h2> 
+            </a>
+        </div>
+        <h3>Hello, {{request.user | upper }}</h3>
+        <div class="logout-form">
+            {% if request.user.is_authenticated %}
+                <form method="post" action="{% url 'logout-user' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <section class="container">
+        <div class="chat__item__container" id="id_chat_item_container">
+            {% for obj in message %}
+            {% if obj.document is not None %}
+                <div class="chat__item__container {% if obj.sender.username == request.user.username %}sent{% else %}received{% endif %}">
+                    <p>
+                        <strong>{{ obj.sender.username | capfirst }}</strong> <br>
+                        <span>{{ obj.content }}</span><br>
+                        <span>{{ obj.document.file.url  }}</span><br>
+                        <img width="400" height="400" src= "{{ request.build_absolute_uri }}{{ obj.document.file.url }}">
+                        <!-- <a href= "{% static obj.document.file %}" > <span>Download</span></a> -->
+                        <span class="timestamp">{{ obj.timestamp }}</span> <br>
+                    </p>
+                    </div>
+            {% else %}
+                <div class="chat__item__container {% if obj.sender.username == request.user.username %}sent{% else %}received{% endif %}">
+                <p>
+                    <strong>{{ obj.sender.username | capfirst }}</strong> <br>
+                    <span>{{ obj.content }}</span><br>
+                    <span class="timestamp">{{ obj.timestamp }}</span> <br>
+                </p>
+                </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <br>
+        <div class="chat__input__container">
+            <div class="file-input-container">
+                <form id ="file-upload-form" method="post" enctype="multipart/form-data" action="upload_file">
+                    {% csrf_token %}
+                    <label for="file-upload" class="custom-file-upload">+</label>
+                    <input id="file-upload" type="file" name="file">
+                    <button type="submit" id="file-upload-button">submit</button>
+                </form>
+            </div>
+            <input type="text" id="id_message_send_input" placeholder="Type your message here...">
+        <button type="button" id="id_message_send_button">Send</button>
+        </div>
+    </section>
+    <script>
+        const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+        chatSocket.onopen = function (e) {
+            console.log("The connection was set up successfully!");
+        };
+        chatSocket.onclose = function (e) {
+            console.log("Something unexpected happened!");
+        };
+        document.querySelector("#id_message_send_input").focus();
+        document.querySelector("#id_message_send_input").onkeyup = function (e) {
+            if (e.keyCode == 13) {
+                document.querySelector("#id_message_send_button").click();
+            }
+        };
+        document.querySelector("#id_message_send_button").onclick = function (e) {
+            var messageInput = document.querySelector("#id_message_send_input").value;
+            chatSocket.send(JSON.stringify({ message: messageInput, username: "{{ request.user.username }}" }));
+            document.querySelector("#id_message_send_input").value = "";
+        };
+        chatSocket.onmessage = function (e) {
+            
+            const data = JSON.parse(e.data);
+            var div = document.createElement("div");
+
+            div.classList.add("chat__item__container");
+
+            var messageClass = (data.username === "{{ request.user.username }}") ? "sent" : "received";
+            div.classList.add(messageClass);
+            var currentTimestamp = new Date().toLocaleString();
+            if (data.file_url){
+                div.innerHTML = `
+                <p>
+                    <strong>${data.username ? data.username : 'Default Sender'}</strong> <br>
+                    <img width="400" height="400" src=${data.file_url}>
+                    <a href=${data.file_url}> <span>Download</span></a>
+                    <span class="timestamp"> ${data.timestamp ? data.timestamp: currentTimestamp}</span><br>
+                    
+                </p>
+            `;
+            }
+            else{
+                div.innerHTML = `
+                <p>
+                    <strong>${data.username ? data.username : 'Default Sender'}</strong> <br>
+                    <span> ${data.message}</span><br>
+                    <span class="timestamp"> ${data.timestamp ? data.timestamp: currentTimestamp}</span><br>
+                    
+                </p>
+            `;
+            }
+
+            document.querySelector("#id_chat_item_container").appendChild(div);
+        };
+
+
+         // Function to display file upload message
+        function displayFileUploaded(response) {
+            var successMessage = response.message;
+            var fileUrl = response.file_url;
+            var messageElement = document.createElement("div");
+            messageElement.textContent = successMessage;
+            var fileLink = document.createElement("a");
+            fileLink.textContent = "Download file";
+            fileLink.href = fileUrl;
+            messageElement.appendChild(fileLink);
+            var chatRoom = document.getElementById("id_chat_item_container");
+            if (chatRoom) {
+                chatRoom.appendChild(messageElement);
+            } else {
+                console.error("Element with ID 'id_chat_item_container' not found.");
+            }
+        }
+
+        // Event listener for file upload form submission
+        document.addEventListener("DOMContentLoaded", function() {
+            var fileUploadForm = document.getElementById("file-upload-form");
+            if (fileUploadForm) {
+                fileUploadForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    var formData = new FormData(this);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", this.action, true);
+                    xhr.onload = function () {
+ 
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                console.error("Failed to upload sucess:", response.message);
+                            
+                                // displayFileUploaded(response); // Display file upload message
+                            } else {
+                                console.error("Failed to upload file:", response.message);
+                            }
+
+                            chatSocket.send(JSON.stringify({ file_url: response.file_url, file_db: response.file_id,username: "{{ request.user.username }}" }));
+                        } else {
+                            console.error("Failed to upload file. Server returned status:", xhr.status);
+                        }
+                    };
+                    xhr.send(formData);
+                });
+                
+            } else {
+                console.error("Element with ID 'file-upload-form' not found.");
+            }
+        });
+    </script>
+</body>
+</html>

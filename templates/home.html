@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+       /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h3 {
+            margin: 0;
+        }
+
+        h2 {
+            margin: 0;
+            color: #fff;
+        }
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #8353cd;
+            color: #ffffff;
+        }
+
+        /* Logout Button */
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Main Content Styles */
+        .contacts-container {
+            text-align: center;
+        }
+        .contacts-container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .contact-list {
+            margin: 20;
+            padding:0;
+            list-style: none; /* Fix list styling */
+            
+        }
+        .contact-list li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #aab3ef; /* Default background color */
+            color: #444; /* Default text color */
+            padding: 14px;
+            margin-bottom: 5px; /* Add margin between contacts */
+            margin-inline: 25%;
+            border-radius: 10px;
+        }
+        .contact-list li:nth-child(even) {
+            background: #7381d0; /* Alternate background color */
+        }
+        .contact-list .heading--name {
+            font-size: 18px;
+            margin: 0;
+        }
+        .contact-list a {
+            text-decoration: none; /* Remove default underline */
+            color: inherit; /* Inherit text color */
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="{% url 'home' %}">
+                <h2>Chat App</h2>
+            </a>
+            
+        </div>
+        <div>
+            {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'logout-user' %}">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+            {% endif %}
+        </div>
+    </header>
+      <br>
+
+    <section class="container">
+        <div class="contacts-container">
+            <h1>Contacts</h1>
+            <ul class="contact-list">
+                {% for users in user %}
+                {% if users != request.user %}
+                <li ng-repeat="athlete in athletesList.athletes | filter: athlete.name">
+                    <!-- <img ng-src="{{ users.image }}"> -->
+                    <div class="contact-info">
+                        <a href="{% url 'user_id' users.id %}">
+                            <h3 class="heading--name">{{ users.username | capfirst }}</h3>
+                        </a>
+                 {% endif %}
+                 {% endfor %}
+                </div>
+            </ul>
+        </div>
+    </section>
+</body>
+</html>
