@@ -36,15 +36,15 @@ class ChatRoomTest(TestCase):
         """
         Testing RoomName model my creating name
         """
-        room = RoomName.objects.get(name="test name")
-        self.assertEqual(room.name,"test name")
+        room = RoomName.objects.get(name="test room")
+        self.assertEqual(room.name,"test room")
 
     def test_document_creation(self):
         """
         Testing the Dcument Model by creating a test document
         """
         document = Document.objects.get(file="text_document.txt")
-        self.assertEqual(document.file.name, "media/documents/test_document.txt")
+        self.assertEqual(document.file.name, "text_document.txt")
         self.assertEqual(document.room_name, self.room)
 
     def test_message_creation(self):
