@@ -64,3 +64,5 @@ def upload_file(request):
     return JsonResponse({"success": False, "message": "Failed to upload file"})
 
 
+
+
